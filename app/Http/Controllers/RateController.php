@@ -85,6 +85,6 @@ class RateController extends Controller
     // This method works when user filter for rates
     public function filter(Request $request)
     {
-        return Rate::with('hotels')->whereDateB
+        return Rate::with('hotels');
     }
 }
