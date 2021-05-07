@@ -1,0 +1,6 @@
+@font-face { font-family: yekan; src: url('../fonts/web_Yekan.woff'); } 
+* {
+font-family:'yekan', Roboto, Arial, sans-serif, fontawsome;
+src:url(../fonts/web_Yekan.woff);
+font-size:15px;	
+}
