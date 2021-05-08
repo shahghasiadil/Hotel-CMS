@@ -72,7 +72,7 @@ class RateController extends Controller
     public function search()
     {
         if ($search = request()->get('q')) {
-            return Rate::whereHas('hotel', function ($query) use ($search) {
+            return Rate::with('hotel')->whereHas('hotel', function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%");
             })->OrWhere('date', 'LIKE', "%$search%")
                 ->orWhere('children_rate_per_night', 'LIKE', "%$search%")
