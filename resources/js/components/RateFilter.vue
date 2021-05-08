@@ -32,7 +32,7 @@
                         <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="col-form-label"># Childrens<span class="text-danger">*</span></label>
-                                        <input v-model="form.choldrens" type="number" name="choldrens"
+                                        <input v-model="form.childrens" type="number" name="choldrens"
                                         class="form-control">
                                     </div>
                         </div>
@@ -46,155 +46,95 @@
                 <button class="btn btn-info  btn-block" @click="load_filter">Generate</button>
             </div>
         </div>
+
   
                 <div class="col-md-12 mt-5">
-                                <table class="table table-bordered custom-table" id="report">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Project</th>
-                                            <th>Budgetcode</th>
-                                            <th>Budget Category Code</th>
-                                            <th>Expensecode</th>
-                                            <th>Unit</th>
-                                            <th># of Activities</th>
-                                            <th>Unit Cost</th>
-                                            <th>Quantity</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th colspan="8"></th>
-                                            <th  style="text-align:right">Total: &nbsp; </th>
-                                            <th width="15%"></th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                            
+                                <div class="table-responsive">
+                    <table class="table table-striped custom-table" id="receipt_transactions">
+                        <thead>
+                            <tr>
+                                <th>{{ 'ID'}}</th>
+                                <th>{{ 'Hotel'}}</th>
+                                <th>{{ 'Date'}}</th>
+                               
+                                <th>{{ 'Adult Rate'}}</th>
+                                <th>{{ 'Children Rate'}}</th>
+                                 <th>Total Rate Of Adults</th>
+                                <th>Total Rate Of Children</th>
+                                <th>{{ 'Unit Total' }}</th>
+                                <th>{{ 'Total' }}</th>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            <tr v-for="rate in rates.data" :key="rate.id">
+                                <td>{{rate.id}}</td>
+                                <td>{{rate.hotel.name}}</td>
+                                <td>{{rate.date}}</td>
+                                <td>{{rate.adult_rate_per_night}}</td>
+                                <td>{{rate.children_rate_per_night}}</td>
+                                <td>{{rate.adult_rate_per_night * Number(form.adults)}}</td>
+                                <td>{{rate.children_rate_per_night* Number(form.childrens)}}</td>
+                                <td>{{rate.adult_rate_per_night + rate.children_rate_per_night}}</td>
+                                <td>{{(rate.adult_rate_per_night * Number(form.adults)) + (rate.children_rate_per_night * Number(form.childrens)) }}</td>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+                    <pagination :data="rates" @pagination-change-page="getResults">
+                        <span slot="prev-nav">&lt; {{ 'previous'  }}</span>
+	                    <span slot="next-nav"> {{ 'next'  }} &gt;</span>
+                    </pagination>
+                </div>
+                    
                             </div>
+
+
                     </div>
 
 
  </template>
 <script>
-import $ from "jquery"
-import DataTable from 'datatables.net-dt'
 
 export default {
  
     data(){
-        selected:null
         return{
             rates:{},
-            form:new form({
+            form:{
                 from:'',
                 to:'',
                 adults:'',
                 childrens:''
-            }),
-            dataTable:null,
+            },
             
         }
     
     },
     methods:{
-        load_filters(){
-            axios.post('/filter?data='+this.form).then((response) => {
-                response.data.data.forEach(rates =>{
-                    this.dataTable.row.add([
-                                rates.id,
-                                rates.hotel.name,
-                                rates.from,
-                                rates.to,
-                                rates.adult_rate_per_night,
-                                rates.children_rate_per_night,
-                                
-        ]).draw(false);
-       
-    })
-            
-            }).catch(err => console.log(err));
-        
-        }
-,
-InitDataTable(){
-   this.dataTable =  $('#report').DataTable( {
-    dom: 'Bfrtip',
-    searching: true,
-    paging: false,
-    info: true,
-    "footerCallback": function ( row, data, start, end, display ) {
-            var api = this.api(), data;
- 
-            // Remove the formatting to get integer data for summation
-            var intVal = function ( i ) {
-                return typeof i === 'string' ?
-                    i.replace(/[\$,]/g, '')*1 :
-                    typeof i === 'number' ?
-                        i : 0;
-            };
- 
-               var total = api
-                .column( 9 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
- 
- 
-                var numFormat = $.fn.dataTable.render.number( '\,', '.', 0, ).display;
-                  $( api.column( 9).footer() ).html(
-                    numFormat( total )
-            );
-        },
-    buttons: [
-        {
-            extend: 'excel',
-            title: 'Agency for Assisstance and Development of Afghanistan',
-            message: ' ',
-            text : '<i class="fa fa-file-excel-o"> Excel</i>',
-            footer:true,
-            exportOptions: {
-                stripHtml: true,
-                columns:':visible'
-            }
-        },
-        {
-            extend: 'pdf',
-            title: 'Agency for Assisstance and Development of Afghanistan',
-            message: ' ',
-            text: '<i class="fa fa-file-pdf-o"> PDF</i>',
-            pageSize: 'A4',
-            download: 'open',
-            orientation: 'landscape',
-            footer:true,
-            exportOptions: {
-                columns: [0,1,2,3,4,5,6,7,8]
+        getResults(page = 1) {
+                axios.get('/filter/?page=' + page)
+                    .then(response => {
+                        this.$Progress.start();
+                        this.rates = response.data;
+                        this.$Progress.finish();
+                    });
             },
-            customize : function(doc) {
-                doc.content[2].table.widths = [ '5%', '8%', '8%', '20%', '15%', '15%', '9%','10%','10%'];
-                doc.defaultStyle.fontSize = 8; //<-- set fontsize to 16 instead of 8 
-                doc.styles.tableHeader.fontSize = 8,
-                doc.styles.tableHeader.alignment = 'left';
-                doc.styles.tableBodyEven.alignment = 'left';
-                doc.styles.tableBodyOdd.alignment = 'left'; 
-            }
-        },
-       
-    ]
-    
-} );
-    }
+        
+        load_filter(){
+            axios.post('/filter',this.form).then(({data}) => (this.rates = data))
+        }
     },
     created(){
+         Fire.$on('AfterEvent',() => {
+                this.load_filter();
+            });
         
     },
 
     mounted(){
-        this.InitDataTable();
-      
+
     }
   
     

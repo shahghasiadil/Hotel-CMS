@@ -30,3 +30,4 @@ Route::resource('rate', 'RateController');
 Route::get('get_rate', 'RateController@index');
 Route::get('search_rate', 'RateController@search');
 Route::get('get_hotels', 'RateController@get_hotels');
+Route::post('/filter', 'RateController@filter');

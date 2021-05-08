@@ -1,5 +1,8 @@
 <?php
 
+use App\Hotel;
+use App\Rate;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class HotelSeeder extends Seeder
@@ -12,5 +15,7 @@ class HotelSeeder extends Seeder
     public function run()
     {
         //
+
+        factory(Hotel::class, 3)->create();
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Rate;
 use Illuminate\Database\Seeder;
 
 class RateSeeder extends Seeder
@@ -12,5 +13,6 @@ class RateSeeder extends Seeder
     public function run()
     {
         //
+        factory(Rate::class, 3)->create();
     }
 }

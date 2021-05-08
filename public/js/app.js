@@ -2354,14 +2354,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2372,8 +2364,7 @@ __webpack_require__.r(__webpack_exports__);
       form: new form({
         id: '',
         hotel_id: '',
-        from: '',
-        to: '',
+        date: '',
         adult_rate_per_night: '',
         children_rate_per_night: ''
       })
@@ -2520,10 +2511,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var datatables_net_dt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! datatables.net-dt */ "./node_modules/datatables.net-dt/js/dataTables.dataTables.js");
-/* harmony import */ var datatables_net_dt__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(datatables_net_dt__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -2604,93 +2591,65 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    selected: null;
-
     return {
       rates: {},
-      form: new form({
+      form: {
         from: '',
         to: '',
         adults: '',
         childrens: ''
-      }),
-      dataTable: null
+      }
     };
   },
   methods: {
-    load_filters: function load_filters() {
+    getResults: function getResults() {
       var _this = this;
 
-      axios.post('/filter?data=' + this.form).then(function (response) {
-        response.data.data.forEach(function (rates) {
-          _this.dataTable.row.add([rates.id, rates.hotel.name, rates.from, rates.to, rates.adult_rate_per_night, rates.children_rate_per_night]).draw(false);
-        });
-      })["catch"](function (err) {
-        return console.log(err);
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      axios.get('/filter/?page=' + page).then(function (response) {
+        _this.$Progress.start();
+
+        _this.rates = response.data;
+
+        _this.$Progress.finish();
       });
     },
-    InitDataTable: function InitDataTable() {
-      this.dataTable = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#report').DataTable({
-        dom: 'Bfrtip',
-        searching: true,
-        paging: false,
-        info: true,
-        "footerCallback": function footerCallback(row, data, start, end, display) {
-          var api = this.api(),
-              data; // Remove the formatting to get integer data for summation
+    load_filter: function load_filter() {
+      var _this2 = this;
 
-          var intVal = function intVal(i) {
-            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-          };
-
-          var total = api.column(9).data().reduce(function (a, b) {
-            return intVal(a) + intVal(b);
-          }, 0);
-          var numFormat = jquery__WEBPACK_IMPORTED_MODULE_0___default.a.fn.dataTable.render.number('\,', '.', 0).display;
-          jquery__WEBPACK_IMPORTED_MODULE_0___default()(api.column(9).footer()).html(numFormat(total));
-        },
-        buttons: [{
-          extend: 'excel',
-          title: 'Agency for Assisstance and Development of Afghanistan',
-          message: ' ',
-          text: '<i class="fa fa-file-excel-o"> Excel</i>',
-          footer: true,
-          exportOptions: {
-            stripHtml: true,
-            columns: ':visible'
-          }
-        }, {
-          extend: 'pdf',
-          title: 'Agency for Assisstance and Development of Afghanistan',
-          message: ' ',
-          text: '<i class="fa fa-file-pdf-o"> PDF</i>',
-          pageSize: 'A4',
-          download: 'open',
-          orientation: 'landscape',
-          footer: true,
-          exportOptions: {
-            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
-          },
-          customize: function customize(doc) {
-            doc.content[2].table.widths = ['5%', '8%', '8%', '20%', '15%', '15%', '9%', '10%', '10%'];
-            doc.defaultStyle.fontSize = 8; //<-- set fontsize to 16 instead of 8 
-
-            doc.styles.tableHeader.fontSize = 8, doc.styles.tableHeader.alignment = 'left';
-            doc.styles.tableBodyEven.alignment = 'left';
-            doc.styles.tableBodyOdd.alignment = 'left';
-          }
-        }]
+      axios.post('/filter', this.form).then(function (_ref) {
+        var data = _ref.data;
+        return _this2.rates = data;
       });
     }
   },
-  created: function created() {},
-  mounted: function mounted() {
-    this.InitDataTable();
-  }
+  created: function created() {
+    var _this3 = this;
+
+    Fire.$on('AfterEvent', function () {
+      _this3.load_filter();
+    });
+  },
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -9262,35 +9221,6 @@ if ( DataTable.ext.features ) {
 
 
 return Buttons;
-}));
-
-
-/***/ }),
-
-/***/ "./node_modules/datatables.net-dt/js/dataTables.dataTables.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/datatables.net-dt/js/dataTables.dataTables.js ***!
-  \********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables styling integration
- * ©2018 SpryMedia Ltd - datatables.net/license
- */
-
-(function( factory ){
-	if ( true ) {
-		// AMD
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! datatables.net */ "./node_modules/datatables.net/js/jquery.dataTables.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function ( $ ) {
-			return factory( $, window, document );
-		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}
-	else {}
-}(function( $, window, document, undefined ) {
-
-return $.fn.dataTable;
-
 }));
 
 
@@ -83717,9 +83647,7 @@ var render = function() {
                     _vm._v(" "),
                     _c("th", [_vm._v(_vm._s("Hotel"))]),
                     _vm._v(" "),
-                    _c("th", [_vm._v(_vm._s("From"))]),
-                    _vm._v(" "),
-                    _c("th", [_vm._v(_vm._s("To"))]),
+                    _c("th", [_vm._v(_vm._s("Date"))]),
                     _vm._v(" "),
                     _c("th", [_vm._v(_vm._s("Adult Rate"))]),
                     _vm._v(" "),
@@ -83737,9 +83665,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(rate.hotel.name))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(rate.from))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(rate.to))]),
+                      _c("td", [_vm._v(_vm._s(rate.date))]),
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(rate.adult_rate_per_night))]),
                       _vm._v(" "),
@@ -84070,39 +83996,11 @@ var render = function() {
                                   locale: "en"
                                 },
                                 model: {
-                                  value: _vm.form.from,
+                                  value: _vm.form.date,
                                   callback: function($$v) {
-                                    _vm.$set(_vm.form, "from", $$v)
+                                    _vm.$set(_vm.form, "date", $$v)
                                   },
-                                  expression: "form.from"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-6" }, [
-                        _c("div", { staticClass: "form-group" }, [
-                          _c(
-                            "div",
-                            { staticClass: "form-group" },
-                            [
-                              _vm._m(6),
-                              _vm._v(" "),
-                              _c("date-picker", {
-                                attrs: {
-                                  "display-format": "MM",
-                                  format: "YYYY-MM-DD",
-                                  locale: "en"
-                                },
-                                model: {
-                                  value: _vm.form.to,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.form, "to", $$v)
-                                  },
-                                  expression: "form.to"
+                                  expression: "form.date"
                                 }
                               })
                             ],
@@ -84222,16 +84120,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { staticClass: "col-form-label" }, [
-      _vm._v("From "),
-      _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", { staticClass: "col-form-label" }, [
-      _vm._v("To "),
+      _vm._v("Date "),
       _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
     ])
   }
@@ -84353,19 +84242,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.form.choldrens,
-                  expression: "form.choldrens"
+                  value: _vm.form.childrens,
+                  expression: "form.childrens"
                 }
               ],
               staticClass: "form-control",
               attrs: { type: "number", name: "choldrens" },
-              domProps: { value: _vm.form.choldrens },
+              domProps: { value: _vm.form.childrens },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.form, "choldrens", $event.target.value)
+                  _vm.$set(_vm.form, "childrens", $event.target.value)
                 }
               }
             })
@@ -84385,7 +84274,116 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm._m(4)
+    _c("div", { staticClass: "col-md-12 mt-5" }, [
+      _c(
+        "div",
+        { staticClass: "table-responsive" },
+        [
+          _c(
+            "table",
+            {
+              staticClass: "table table-striped custom-table",
+              attrs: { id: "receipt_transactions" }
+            },
+            [
+              _c("thead", [
+                _c("tr", [
+                  _c("th", [_vm._v(_vm._s("ID"))]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v(_vm._s("Hotel"))]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v(_vm._s("Date"))]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v(_vm._s("Adult Rate"))]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v(_vm._s("Children Rate"))]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v("Total Rate Of Adults")]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v("Total Rate Of Children")]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v(_vm._s("Unit Total"))]),
+                  _vm._v(" "),
+                  _c("th", [_vm._v(_vm._s("Total"))])
+                ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.rates.data, function(rate) {
+                  return _c("tr", { key: rate.id }, [
+                    _c("td", [_vm._v(_vm._s(rate.id))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(rate.hotel.name))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(rate.date))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(rate.adult_rate_per_night))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(rate.children_rate_per_night))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(
+                          rate.adult_rate_per_night * Number(_vm.form.adults)
+                        )
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(
+                          rate.children_rate_per_night *
+                            Number(_vm.form.childrens)
+                        )
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(
+                          rate.adult_rate_per_night +
+                            rate.children_rate_per_night
+                        )
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(
+                          rate.adult_rate_per_night * Number(_vm.form.adults) +
+                            rate.children_rate_per_night *
+                              Number(_vm.form.childrens)
+                        )
+                      )
+                    ])
+                  ])
+                }),
+                0
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "pagination",
+            {
+              attrs: { data: _vm.rates },
+              on: { "pagination-change-page": _vm.getResults }
+            },
+            [
+              _c("span", { attrs: { slot: "prev-nav" }, slot: "prev-nav" }, [
+                _vm._v("< " + _vm._s("previous"))
+              ]),
+              _vm._v(" "),
+              _c("span", { attrs: { slot: "next-nav" }, slot: "next-nav" }, [
+                _vm._v(" " + _vm._s("next") + " >")
+              ])
+            ]
+          )
+        ],
+        1
+      )
+    ])
   ])
 }
 var staticRenderFns = [
@@ -84423,59 +84421,6 @@ var staticRenderFns = [
     return _c("label", { staticClass: "col-form-label" }, [
       _vm._v("# Childrens"),
       _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-12 mt-5" }, [
-      _c(
-        "table",
-        {
-          staticClass: "table table-bordered custom-table",
-          attrs: { id: "report" }
-        },
-        [
-          _c("thead", [
-            _c("tr", [
-              _c("th", [_vm._v("ID")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Project")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Budgetcode")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Budget Category Code")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Expensecode")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Unit")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("# of Activities")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Unit Cost")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Quantity")]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Total")])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("tbody"),
-          _vm._v(" "),
-          _c("tfoot", [
-            _c("tr", [
-              _c("th", { attrs: { colspan: "8" } }),
-              _vm._v(" "),
-              _c("th", { staticStyle: { "text-align": "right" } }, [
-                _vm._v("Total:   ")
-              ]),
-              _vm._v(" "),
-              _c("th", { attrs: { width: "15%" } })
-            ])
-          ])
-        ]
-      )
     ])
   }
 ]

@@ -31,8 +31,8 @@
                             <tr>
                                 <th>{{ 'ID'}}</th>
                                 <th>{{ 'Hotel'}}</th>
-                                <th>{{ 'From'}}</th>
-                                <th>{{ 'To'}}</th>
+                                <th>{{ 'Date'}}</th>
+                               
                                 <th>{{ 'Adult Rate'}}</th>
                                 <th>{{ 'Children Rate'}}</th>
                                 <th>{{ 'Action' }}</th>
@@ -43,8 +43,8 @@
                             <tr v-for="rate in rates.data" :key="rate.id">
                                 <td>{{rate.id}}</td>
                                 <td>{{rate.hotel.name}}</td>
-                                <td>{{rate.from}}</td>
-                                <td>{{rate.to}}</td>
+                                <td>{{rate.date}}</td>
+
                                 <td>{{rate.adult_rate_per_night}}</td>
                                 <td>{{rate.children_rate_per_night}}</td>
                                 <td class="text-right">
@@ -110,22 +110,14 @@
                                 <div class="col-sm-6">
 									<div class="form-group">
 										<div class="form-group">
-                                        <label class="col-form-label">From <span class="text-danger">*</span></label>
-                                        <date-picker display-format="MM" format="YYYY-MM-DD" locale="en" v-model="form.from" ></date-picker>
+                                        <label class="col-form-label">Date <span class="text-danger">*</span></label>
+                                        <date-picker display-format="MM" format="YYYY-MM-DD" locale="en" v-model="form.date" ></date-picker>
  
 										</div>
 									</div>
 							    </div>
 
-                                <div class="col-sm-6">
-									<div class="form-group">
-										<div class="form-group">
-                                        <label class="col-form-label">To <span class="text-danger">*</span></label>
-                                        <date-picker display-format="MM" format="YYYY-MM-DD" locale="en" v-model="form.to" ></date-picker>
- 
-										</div>
-									</div>
-							    </div>
+                               
                             </div>
                             <div class="submit-section">
                                 <button v-show="edit_mode" class="btn btn-primary submit-btn">Update</button>
@@ -152,8 +144,7 @@
                 form: new form({
                     id:'',
                     hotel_id:'',
-                    from:'',
-                    to:'',
+                    date:'',
                     adult_rate_per_night:'',
                     children_rate_per_night:'',
                 })
@@ -176,9 +167,7 @@
                 axios.get('get_rate/?page=' + page)
                     .then(response => {
                         this.$Progress.start();
-
                         this.rates = response.data;
-
                         this.$Progress.finish();
 
 

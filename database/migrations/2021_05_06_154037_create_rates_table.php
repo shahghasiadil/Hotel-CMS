@@ -15,8 +15,7 @@ class CreateRatesTable extends Migration
     {
         Schema::create('rates', function (Blueprint $table) {
             $table->id();
-            $table->date('from');
-            $table->date('to');
+            $table->date('date');
             $table->bigInteger('adult_rate_per_night');
             $table->bigInteger('children_rate_per_night');
             $table->foreignId('hotel_id')->constrained()->onDelete('cascade');

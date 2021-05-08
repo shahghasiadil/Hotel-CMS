@@ -6,9 +6,12 @@ use App\Hotel;
 use App\Rate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Psy\Command\WhereamiCommand;
 
 class RateController extends Controller
 {
+
 
     public function __construct()
     {
@@ -32,16 +35,14 @@ class RateController extends Controller
 
 
         $this->validate($request, [
-            'from' => 'date',
-            'to' => 'date',
+            'date' => 'date',
             'adult_rate_per_night' => 'integer',
             'children_rate_per_night' => 'integer',
             'hotel_id' => 'required',
         ]);
 
-        $rates = new Rate;
-        $rates->from = $request->from;
-        $rates->to = $request->to;
+        $rates = new Rate();
+        $rates->date = $request->date;
         $rates->adult_rate_per_night = $request->adult_rate_per_night;
         $rates->hotel_id = $request->hotel_id;
         $rates->children_rate_per_night = $request->children_rate_per_night;
@@ -53,8 +54,7 @@ class RateController extends Controller
     {
         $rates = Rate::findOrFail($id);
         $this->validate($request, [
-            'from' => 'date',
-            'to' => 'date',
+            'date' => 'date',
             'adult_rate_per_night' => 'integer',
             'children_rate_per_night' => 'integer',
             'hotel_id' => 'required',
@@ -85,6 +85,9 @@ class RateController extends Controller
     // This method works when user filter for rates
     public function filter(Request $request)
     {
-        return Rate::with('hotels');
+        return Rate::with('hotel')
+            ->where('date', '>=', $request->from)->where('date', '<=', $request->to)
+            ->latest()
+            ->paginate(10);
     }
 }
