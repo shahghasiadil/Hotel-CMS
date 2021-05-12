@@ -31,8 +31,7 @@
                             <tr>
                                 <th>{{ 'ID'}}</th>
                                 <th>{{ 'Hotel'}}</th>
-                                <th>{{ 'Date'}}</th>
-                               
+                                <th>{{ 'Date Range'}}</th>
                                 <th>{{ 'Adult Rate'}}</th>
                                 <th>{{ 'Children Rate'}}</th>
                                 <th>{{ 'Action' }}</th>
@@ -43,8 +42,7 @@
                             <tr v-for="rate in rates.data" :key="rate.id">
                                 <td>{{rate.id}}</td>
                                 <td>{{rate.hotel.name}}</td>
-                                <td>{{rate.date}}</td>
-
+                                <td>{{`${rate.from}  -  ${rate.to}`}}</td>
                                 <td>{{rate.adult_rate_per_night}}</td>
                                 <td>{{rate.children_rate_per_night}}</td>
                                 <td class="text-right">
@@ -110,9 +108,16 @@
                                 <div class="col-sm-6">
 									<div class="form-group">
 										<div class="form-group">
-                                        <label class="col-form-label">Date <span class="text-danger">*</span></label>
-                                        <date-picker display-format="MM" format="YYYY-MM-DD" locale="en" v-model="form.date" ></date-picker>
- 
+                                        <label class="col-form-label">From <span class="text-danger">*</span></label>
+                                        <date-picker display-format="MM" format="YYYY-MM-DD" locale="en" v-model="form.from" ></date-picker>
+										</div>
+									</div>
+							    </div>
+                                <div class="col-sm-6">
+									<div class="form-group">
+										<div class="form-group">
+                                        <label class="col-form-label">To <span class="text-danger">*</span></label>
+                                        <date-picker display-format="MM" format="YYYY-MM-DD" locale="en" v-model="form.to" ></date-picker>
 										</div>
 									</div>
 							    </div>
@@ -144,7 +149,8 @@
                 form: new form({
                     id:'',
                     hotel_id:'',
-                    date:'',
+                    from:'',
+                    to:'',
                     adult_rate_per_night:'',
                     children_rate_per_night:'',
                 })

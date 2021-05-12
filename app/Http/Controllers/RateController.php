@@ -42,7 +42,8 @@ class RateController extends Controller
         ]);
 
         $rates = new Rate();
-        $rates->date = $request->date;
+        $rates->from = $request->from;
+        $rates->to = $request->to;
         $rates->adult_rate_per_night = $request->adult_rate_per_night;
         $rates->hotel_id = $request->hotel_id;
         $rates->children_rate_per_night = $request->children_rate_per_night;
@@ -54,7 +55,8 @@ class RateController extends Controller
     {
         $rates = Rate::findOrFail($id);
         $this->validate($request, [
-            'date' => 'date',
+            'from' => 'date',
+            'to' => 'date',
             'adult_rate_per_night' => 'integer',
             'children_rate_per_night' => 'integer',
             'hotel_id' => 'required',
@@ -74,7 +76,8 @@ class RateController extends Controller
         if ($search = request()->get('q')) {
             return Rate::with('hotel')->whereHas('hotel', function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%");
-            })->OrWhere('date', 'LIKE', "%$search%")
+            })->OrWhere('from', 'LIKE', "%$search%")
+                ->orWhere('to', 'LIKE', "%$search%")
                 ->orWhere('children_rate_per_night', 'LIKE', "%$search%")
                 ->orWhere('adult_rate_per_night', 'LIKE', "%$search%")
                 ->paginate(10);
@@ -86,7 +89,7 @@ class RateController extends Controller
     public function filter(Request $request)
     {
         return Rate::with('hotel')
-            ->where('date', '>=', $request->from)->where('date', '<=', $request->to)
+            ->where('from', '>=', $request->from)->where('to', '<=', $request->to)
             ->latest()
             ->paginate(10);
     }

@@ -9,7 +9,8 @@ use Faker\Generator as Faker;
 
 $factory->define(Rate::class, function (Faker $faker) {
     return [
-        'date' => $faker->date($format = 'Y-m-d', $max = 'now'),
+        'from' => $faker->date($format = 'Y-m-d', $max = 'now'),
+        'to' => $faker->date($format = 'Y-m-d', $max = 'now'),
         'adult_rate_per_night' => $faker->numerify('##'),
         'children_rate_per_night' => $faker->numerify('##'),
         'hotel_id' => factory(Hotel::class)

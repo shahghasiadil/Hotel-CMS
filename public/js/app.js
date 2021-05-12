@@ -2354,6 +2354,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2364,7 +2369,8 @@ __webpack_require__.r(__webpack_exports__);
       form: new form({
         id: '',
         hotel_id: '',
-        date: '',
+        from: '',
+        to: '',
         adult_rate_per_night: '',
         children_rate_per_night: ''
       })
@@ -83647,7 +83653,7 @@ var render = function() {
                     _vm._v(" "),
                     _c("th", [_vm._v(_vm._s("Hotel"))]),
                     _vm._v(" "),
-                    _c("th", [_vm._v(_vm._s("Date"))]),
+                    _c("th", [_vm._v(_vm._s("Date Range"))]),
                     _vm._v(" "),
                     _c("th", [_vm._v(_vm._s("Adult Rate"))]),
                     _vm._v(" "),
@@ -83665,7 +83671,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(rate.hotel.name))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(rate.date))]),
+                      _c("td", [_vm._v(_vm._s(rate.from + "  -  " + rate.to))]),
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(rate.adult_rate_per_night))]),
                       _vm._v(" "),
@@ -83996,11 +84002,39 @@ var render = function() {
                                   locale: "en"
                                 },
                                 model: {
-                                  value: _vm.form.date,
+                                  value: _vm.form.from,
                                   callback: function($$v) {
-                                    _vm.$set(_vm.form, "date", $$v)
+                                    _vm.$set(_vm.form, "from", $$v)
                                   },
-                                  expression: "form.date"
+                                  expression: "form.from"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-6" }, [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c(
+                            "div",
+                            { staticClass: "form-group" },
+                            [
+                              _vm._m(6),
+                              _vm._v(" "),
+                              _c("date-picker", {
+                                attrs: {
+                                  "display-format": "MM",
+                                  format: "YYYY-MM-DD",
+                                  locale: "en"
+                                },
+                                model: {
+                                  value: _vm.form.to,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.form, "to", $$v)
+                                  },
+                                  expression: "form.to"
                                 }
                               })
                             ],
@@ -84120,7 +84154,16 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { staticClass: "col-form-label" }, [
-      _vm._v("Date "),
+      _vm._v("From "),
+      _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { staticClass: "col-form-label" }, [
+      _vm._v("To "),
       _c("span", { staticClass: "text-danger" }, [_vm._v("*")])
     ])
   }
