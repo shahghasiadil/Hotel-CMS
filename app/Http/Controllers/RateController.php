@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Hotel;
 use App\Rate;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+
 use Illuminate\Support\Facades\DB;
-use Psy\Command\WhereamiCommand;
+
 
 class RateController extends Controller
 {
@@ -88,9 +89,20 @@ class RateController extends Controller
     // This method works when user filter for rates
     public function filter(Request $request)
     {
-        return Rate::with('hotel')
-            ->where('from', '>=', $request->from)->where('to', '<=', $request->to)
-            ->latest()
-            ->paginate(10);
+        $dates = $this->getDateRange($request->from, $request->to);
+        return Rate::whereIn('to', $dates)->get();
+    }
+
+    public function getDateRange($from, $to)
+    {
+        $start = Carbon::createFromFormat('Y-m-d', substr($from, 0, 10));
+        $end = Carbon::createFromFormat('Y-m-d', substr($to, 0, 10));
+        $dates = [];
+        while ($start->lte($end)) {
+
+            $dates[] = $start->copy()->format('Y-m-d');
+            $start->addDay();
+        }
+        return $dates;
     }
 }
